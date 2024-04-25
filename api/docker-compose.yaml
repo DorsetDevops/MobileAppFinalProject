@@ -2,8 +2,6 @@ version: "3"
 services:
   database:
     image: postgis/postgis:13-master
-    # Required when running on platform other than amd64, like Apple M1/M2:
-    # platform: linux/amd64
     volumes:
       - ./data/database:/var/lib/postgresql/data
     environment:
@@ -11,11 +9,8 @@ services:
       POSTGRES_PASSWORD: "directus"
       POSTGRES_DB: "directus"
 
-
   directus:
     image: directus/directus:10.10.5
-    ports:
-      - 8055:8055
     volumes:
       - ./uploads:/directus/uploads:rw
       - ./extensions:/directus/extensions
@@ -24,21 +19,21 @@ services:
     environment:
       KEY: "255d861b-5ea1-5996-9aa3-922530ec40b1"
       SECRET: "6116487b-cda1-52c2-b5b5-c8022c45e263"
-
       DB_CLIENT: "pg"
       DB_HOST: "database"
       DB_PORT: "5432"
       DB_DATABASE: "directus"
       DB_USER: "directus"
       DB_PASSWORD: "directus"
-
       ADMIN_EMAIL: "admin@example.com"
       ADMIN_PASSWORD: "d1r3ctu5"
 
-      # Make sure to set this in production
-      # (see https://docs.directus.io/self-hosted/config-options#general)
-      # PUBLIC_URL: "https://directus.example.com"
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - directus
 
-    # Environment variables can also be defined in a file (for example `.env`):
-    # env_file:
-    #	  - .env
