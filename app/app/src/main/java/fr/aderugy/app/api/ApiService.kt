@@ -14,7 +14,7 @@ import retrofit2.http.PATCH
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-const val BASE_URL = "http://10.0.2.2:8055"
+const val BASE_URL = "http://35.195.95.11"
 
 interface ApiService {
     @POST("/auth/login")
