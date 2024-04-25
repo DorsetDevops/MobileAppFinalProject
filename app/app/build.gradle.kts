@@ -51,18 +51,14 @@ android {
 }
 
 dependencies {
-    //DataStore
     implementation(libs.androidx.datastore.preferences)
 
-//Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
 
-//Hilt
     implementation(libs.hilt.android)
     implementation(libs.hilt.compiler)
 
-//OkHttp
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
 
