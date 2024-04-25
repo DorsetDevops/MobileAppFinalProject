@@ -62,10 +62,10 @@ fun LoginScreen(apiService: ApiService, activity: ComponentActivity) {
         Button(onClick = {
             coroutineScope.launch {
                 responseMessage = if (ApiService.login(apiService, LoginRequest(email, password))) {
-                    // Start MainActivity on successful login
+
                     val intent = Intent(activity, MainActivity::class.java)
                     activity.startActivity(intent)
-                    // Finish the current activity
+
                     activity.finish()
                     "Authenticated"
                 } else {
@@ -80,10 +80,10 @@ fun LoginScreen(apiService: ApiService, activity: ComponentActivity) {
                 val registered = apiService.register(CreateApiUserPayload(email, password))
 
                 if (registered.isSuccessful && ApiService.login(apiService, LoginRequest(email, password))) {
-                    // Start MainActivity on successful login
+
                     val intent = Intent(activity, MainActivity::class.java)
                     activity.startActivity(intent)
-                    // Finish the current activity
+
                     activity.finish()
                 }
                 else

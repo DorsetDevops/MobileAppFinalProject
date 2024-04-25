@@ -50,7 +50,7 @@ data class OrderProductDisplay(
 
 @Composable
 fun HistoryScreen(apiService: ApiService) {
-    var currentView by remember { mutableStateOf("orders") }  // "orders" or "productDetails"
+    var currentView by remember { mutableStateOf("orders") }
     var selectedOrder by remember { mutableStateOf<OrderDisplay?>(null) }
 
     var isLoading by remember { mutableStateOf(true) }
@@ -140,28 +140,28 @@ fun OrderItem(orderDisplay: OrderDisplay, onClick: () -> Unit) {
             .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Nested Row for price
+
         Row(
-            modifier = Modifier.weight(2f), // Use weight to allocate space based on content
+            modifier = Modifier.weight(2f),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "${"%.2f".format(orderDisplay.price)} €",
-                style = MaterialTheme.typography.bodyLarge, // Big text
+                style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
         }
 
-        // Nested Column for date and quantity
+
         Column(
             modifier = Modifier
-                .weight(4f) // Takes more space
+                .weight(4f)
                 .padding(start = 8.dp),
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = formatDate(orderDisplay.date_created), // Format date
-                style = MaterialTheme.typography.bodyMedium, // Medium text
+                text = formatDate(orderDisplay.date_created),
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
             Text(
@@ -170,7 +170,7 @@ fun OrderItem(orderDisplay: OrderDisplay, onClick: () -> Unit) {
             )
         }
 
-        // Display Order ID at the end
+
         Text(
             text = "Order ID: ${orderDisplay.id}",
             style = MaterialTheme.typography.bodyMedium,

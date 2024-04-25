@@ -61,7 +61,7 @@ fun HomeScreen(apiService: ApiService) {
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var refreshTrigger by remember { mutableIntStateOf(0) }
 
-    // Use LaunchedEffect to call API when the composable first appears
+
     LaunchedEffect(key1 = true, key2 = refreshTrigger) {
         try {
             categories = apiService.getCategories().body()?.data
@@ -88,7 +88,7 @@ fun HomeScreen(apiService: ApiService) {
                 cartItems = cartItems,
                 apiService = apiService,
                 onBack = { selectedProduct = null },
-                onCartUpdated = { refreshTrigger += 1 }  // Toggle the trigger to refresh
+                onCartUpdated = { refreshTrigger += 1 }
             )
         } else if (selectedCategory != null) {
             val category = categories?.find { it.id == selectedCategory }
@@ -179,8 +179,8 @@ fun ProductList(products: List<ApiProduct>, onSelectProduct: (Int) -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailsScreen(product: ApiProduct?, cartItems: List<ApiCart>?, apiService: ApiService, onBack: () -> Unit, onCartUpdated: () -> Unit ) {
-    val coroutineScope = rememberCoroutineScope()  // Create a coroutine scope
-    // Check if the product is already in the cart and set initial values
+    val coroutineScope = rememberCoroutineScope()
+
     val initialCart = cartItems?.find { it.product == product?.id }
     var quantity by remember { mutableStateOf(initialCart?.quantity ?: 0) }
     val isInCart = initialCart != null

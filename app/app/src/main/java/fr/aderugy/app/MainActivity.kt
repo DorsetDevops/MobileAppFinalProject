@@ -95,7 +95,7 @@ fun CustomBottomBar(navController: NavHostController) {
                 contentDescription = null,
                 modifier = Modifier
                     .padding(16.dp)
-                    .size(if (isSelected) 30.dp else 24.dp)  // Larger size for selected
+                    .size(if (isSelected) 30.dp else 24.dp)
                     .clickable {
                         navController.navigate(route) {
                             launchSingleTop = true

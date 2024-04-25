@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import fr.aderugy.app.LoginActivity
-import fr.aderugy.app.MainActivity
 import fr.aderugy.app.api.ApiService
 import fr.aderugy.app.api.ApiUser
 import fr.aderugy.app.api.UpdateApiAddress
@@ -74,14 +73,14 @@ fun UserProfileForm(apiService: ApiService, context: Context, onAboutClick: () -
                         value = firstName,
                         onValueChange = { firstName = it },
                         label = "First Name",
-                        modifier = Modifier.weight(1f) // Each child takes half the width of the Row
+                        modifier = Modifier.weight(1f)
                     )
-                    Spacer(modifier = Modifier.width(8.dp)) // Optional spacer for padding between fields
+                    Spacer(modifier = Modifier.width(8.dp))
                     UserTextField(
                         value = lastName,
                         onValueChange = { lastName = it },
                         label = "Last Name",
-                        modifier = Modifier.weight(1f) // Each child takes half the width of the Row
+                        modifier = Modifier.weight(1f)
                     )
                 }
                 UserTextField(value = email, onValueChange = { email = it }, label = "Email")
@@ -89,7 +88,7 @@ fun UserProfileForm(apiService: ApiService, context: Context, onAboutClick: () -
 
                 Spacer(Modifier.height(16.dp))
 
-                // Address fields
+
                 Text("Address", style = MaterialTheme.typography.headlineMedium)
                 UserTextField(value = addressNumber, onValueChange = { addressNumber = it }, label = "Number")
                 UserTextField(value = addressStreet, onValueChange = { addressStreet = it }, label = "Street")
@@ -97,14 +96,14 @@ fun UserProfileForm(apiService: ApiService, context: Context, onAboutClick: () -
                     UserTextField(
                         value = addressCity,
                         onValueChange = { addressCity = it },
-                        modifier = Modifier.weight(1f), // Each child takes half the width of the Row
+                        modifier = Modifier.weight(1f),
                         label = "City"
                     )
-                    Spacer(modifier = Modifier.width(8.dp)) // Optional spacer for padding between fields
+                    Spacer(modifier = Modifier.width(8.dp))
                     UserTextField(
                         value = addressZipcode,
                         onValueChange = { addressZipcode = it },
-                        modifier = Modifier.weight(1f), // Each child takes half the width of the Row
+                        modifier = Modifier.weight(1f),
                         label = "Zipcode"
                     )
                 }
@@ -113,14 +112,14 @@ fun UserProfileForm(apiService: ApiService, context: Context, onAboutClick: () -
                     UserTextField(
                         value = geolocationLat,
                         onValueChange = { geolocationLat = it },
-                        modifier = Modifier.weight(1f), // Each child takes half the width of the Row
+                        modifier = Modifier.weight(1f),
                         label = "Latitude"
                     )
-                    Spacer(modifier = Modifier.width(8.dp)) // Optional spacer for padding between fields
+                    Spacer(modifier = Modifier.width(8.dp))
                     UserTextField(
                         value = geolocationLon,
                         onValueChange = { geolocationLon = it },
-                        modifier = Modifier.weight(1f), // Each child takes half the width of the Row
+                        modifier = Modifier.weight(1f),
                         label = "Longitude"
                     )
                 }
@@ -158,7 +157,7 @@ fun UserProfileForm(apiService: ApiService, context: Context, onAboutClick: () -
                     Text("Apply Changes")
                 }
                 Button(
-                    onClick = { onAboutClick() },  // This method should handle navigation
+                    onClick = { onAboutClick() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)

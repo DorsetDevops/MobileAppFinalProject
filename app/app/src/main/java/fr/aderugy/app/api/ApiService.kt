@@ -98,7 +98,7 @@ interface ApiService {
             if (response.isSuccessful) {
                 response.body()?.data?.let {
                     tokenStorage?.saveAuthData(it)
-                    return true  // Token refreshed successfully
+                    return true
                 }
             }
 
@@ -113,11 +113,11 @@ interface ApiService {
                 if (response.isSuccessful) {
                     response.body()?.data?.let {
                         tokenStorage?.saveAuthData(it)
-                        return true  // Token refreshed successfully
+                        return true
                     }
                 }
             }
-            return false  // Refresh failed
+            return false
         }
     }
 }

@@ -128,33 +128,27 @@ fun CartScreen(apiService: ApiService, context: Context) {
                 )
                 Button(onClick = {
                     coroutineScope.launch {
-                        // Create ProductEntry list from cartItems
                         val entries = cartItems!!.flatMap { cartItem ->
                             List(cartItem.quantity) { ProductEntry(product = cartItem.product) }
                         }
 
-                        // Create the payload
                         val payload = CreateOrderPayload(OrderEntries(create = entries))
 
-                        // Call the API
                         try {
                             apiService.createOrder(payload)
 
-                            // If the order creation is successful, show a confirmation Toast
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(context, "Order placed successfully!", Toast.LENGTH_LONG).show()
                             }
 
-                            // Clear the cart by deleting items
                             cartItems!!.forEach {
                                 apiService.deleteCart(it.id.toString())
                             }
 
-                            // Refresh the UI or data
                             refreshTrigger += 1
                         } catch (e: Exception) {
                             Log.e("ERROR", e.message ?: "")
-                            // Handle potential errors such as network issues or API failures
+
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(context, "Failed to place order: ${e.message}", Toast.LENGTH_LONG).show()
                             }
