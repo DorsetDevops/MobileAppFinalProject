@@ -1,5 +1,6 @@
 package fr.aderugy.app
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -43,13 +44,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         apiService = ApiService.create(this)
         setContent {
-            MyApp(apiService)
+            MyApp(apiService, this)
         }
     }
 }
 
 @Composable
-fun MyApp(apiService: ApiService) {
+fun MyApp(apiService: ApiService, context: Context) {
     val navController = rememberNavController()
     Scaffold(
         bottomBar = {
@@ -57,7 +58,7 @@ fun MyApp(apiService: ApiService) {
         }
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
-            NavigationGraph(navController, apiService)
+            NavigationGraph(navController, apiService, context)
         }
     }
 }
@@ -71,10 +72,8 @@ fun CustomBottomBar(navController: NavHostController) {
         "profile" to Icons.Default.AccountCircle
     )
 
-    // This state is updated whenever the destination changes
     val currentRoute = remember { mutableStateOf(navController.currentDestination?.route) }
 
-    // Add a listener to update currentRoute when the destination changes
     LaunchedEffect(key1 = navController) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             currentRoute.value = destination.route
@@ -99,9 +98,7 @@ fun CustomBottomBar(navController: NavHostController) {
                     .size(if (isSelected) 30.dp else 24.dp)  // Larger size for selected
                     .clickable {
                         navController.navigate(route) {
-                            // Avoid multiple copies of the same destination
                             launchSingleTop = true
-                            // Restore state when revisiting a previously visited screen
                             restoreState = true
                         }
                     },
@@ -112,12 +109,12 @@ fun CustomBottomBar(navController: NavHostController) {
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController, apiService: ApiService) {
+fun NavigationGraph(navController: NavHostController, apiService: ApiService, context: Context) {
     NavHost(navController, startDestination = "home") {
         composable("home") { HomeScreen(apiService) }
         composable("history") { HistoryScreen(apiService) }
-        composable("cart") { CartScreen(apiService) }
-        composable("profile") { ProfileScreen(apiService) }  // Assume ProfileScreen takes NavController to handle image loading
+        composable("cart") { CartScreen(apiService, context) }
+        composable("profile") { ProfileScreen(apiService, context) }
     }
 }
 

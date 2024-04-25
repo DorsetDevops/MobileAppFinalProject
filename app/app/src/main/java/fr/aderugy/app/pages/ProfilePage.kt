@@ -1,21 +1,17 @@
 package fr.aderugy.app.pages
 
-import androidx.compose.foundation.Image
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import fr.aderugy.app.R
+import fr.aderugy.app.LoginActivity
+import fr.aderugy.app.MainActivity
 import fr.aderugy.app.api.ApiService
 import fr.aderugy.app.api.ApiUser
 import fr.aderugy.app.api.UpdateApiAddress
@@ -24,11 +20,21 @@ import fr.aderugy.app.api.UpdateApiUser
 import kotlinx.coroutines.launch
 
 @Composable
-fun ProfileScreen(apiService: ApiService) {
+fun ProfileScreen(apiService: ApiService, context: Context) {
+    var showAboutScreen by remember { mutableStateOf(false) }
+    if (showAboutScreen) {
+        AboutAppScreen { showAboutScreen = false }
+    } else {
+        UserProfileForm(apiService, context) { showAboutScreen = true }
+    }
+}
+
+@Composable
+fun UserProfileForm(apiService: ApiService, context: Context, onAboutClick: () -> Unit) {
     var user by remember { mutableStateOf<ApiUser?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-    var refreshTrigger by remember { mutableStateOf(0) }
+    var refreshTrigger by remember { mutableIntStateOf(0) }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -52,7 +58,7 @@ fun ProfileScreen(apiService: ApiService) {
             var lastName by remember { mutableStateOf(apiUser.last_name) }
             var email by remember { mutableStateOf(apiUser.email) }
             var phone by remember { mutableStateOf(apiUser.phone) }
-            var addressNumber by remember { mutableStateOf(apiUser.address.number.toString()) }
+            var addressNumber by remember { mutableStateOf(apiUser.address.number?.toString()) }
             var addressStreet by remember { mutableStateOf(apiUser.address.street) }
             var addressCity by remember { mutableStateOf(apiUser.address.city) }
             var addressZipcode by remember { mutableStateOf(apiUser.address.zipcode) }
@@ -121,10 +127,15 @@ fun ProfileScreen(apiService: ApiService) {
 
                 Spacer(Modifier.height(16.dp))
 
-                Button(onClick = {
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .align(Alignment.CenterHorizontally),
+                    onClick = {
                     coroutineScope.launch {
                         val updatedAddress = UpdateApiAddress(
-                            number = addressNumber.toIntOrNull(),
+                            number = addressNumber?.toIntOrNull(),
                             street = addressStreet,
                             city = addressCity,
                             zipcode = addressZipcode,
@@ -143,8 +154,32 @@ fun ProfileScreen(apiService: ApiService) {
                         apiService.updateAddress(user?.address?.id.toString(), updatedAddress)
                         refreshTrigger++
                     }
-                }, modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                }) {
                     Text("Apply Changes")
+                }
+                Button(
+                    onClick = { onAboutClick() },  // This method should handle navigation
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    Text("About This App")
+                }
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .align(Alignment.CenterHorizontally),
+                    onClick = {
+                    coroutineScope.launch {
+                        ApiService.logout()
+                        val intent = Intent(context, LoginActivity::class.java)
+                        context.startActivity(intent)
+                    }
+                }
+                ) {
+                    Text("Log out")
                 }
             }
         }
@@ -162,4 +197,27 @@ fun UserTextField(value: String?, onValueChange: (String) -> Unit, label: String
         modifier = modifier,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
     )
+}
+
+
+@Composable
+fun AboutAppScreen(onBack: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("About This App", style = MaterialTheme.typography.headlineMedium)
+        Spacer(Modifier.height(16.dp))
+        Text("NO COPYRIGHTS", style = MaterialTheme.typography.bodyLarge)
+        Text("@AUTHOR ADERUGY", style = MaterialTheme.typography.bodyLarge)
+        Spacer(Modifier.height(8.dp))
+        Text("Version 1.0.0", style = MaterialTheme.typography.bodyLarge)
+        Spacer(Modifier.height(16.dp))
+        Button(onClick = onBack) {
+            Text("Back to Profile")
+        }
+    }
 }

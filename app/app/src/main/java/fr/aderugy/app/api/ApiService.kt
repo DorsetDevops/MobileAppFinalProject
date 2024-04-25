@@ -20,14 +20,14 @@ interface ApiService {
     @POST("/auth/login")
     suspend fun login(@Body credentials: LoginRequest): Response<DirectusResponse<AuthData>>
 
+    @POST("/users")
+    suspend fun register(@Body credentials: CreateApiUserPayload): Response<DirectusResponse<ApiUser>>
+
     @POST("/auth/refresh")
     suspend fun refresh(@Body credentials: RefreshRequest): Response<DirectusResponse<AuthData>>
 
     @GET("/users/me?fields[]=*,address.*")
     suspend fun getUserProfile(): Response<DirectusResponse<ApiUser>>
-
-    @POST("/users/me")
-    suspend fun createUser(@Body user: CreateApiUserPayload): Response<DirectusResponse<ApiUser>>
 
     @PATCH("/users/me")
     suspend fun updateUser(@Body user: UpdateApiUser): Response<DirectusResponse<Any>>
@@ -50,7 +50,7 @@ interface ApiService {
         @Query("fields[]") fields: String = "*,product.*"
     ): Response<DirectusResponse<List<ApiOrderEntryFull>>>
 
-    @POST("/items/orders?fields[]=order_entries.*,order_entries.product.*")
+    @POST("/items/orders")
     suspend fun createOrder(@Body createOrderPayload: CreateOrderPayload): Response<DirectusResponse<ApiOrder>>
 
     @GET("/items/carts")
@@ -88,6 +88,10 @@ interface ApiService {
                 .create(ApiService::class.java)
         }
 
+        fun logout() {
+            tokenStorage?.clearTokens();
+        }
+
         suspend fun login(apiService: ApiService, loginRequest: LoginRequest): Boolean {
             tokenStorage?.clearAccessToken()
             val response = apiService.login(loginRequest)
@@ -120,16 +124,16 @@ interface ApiService {
 
 
 data class LoginRequest(val email: String, val password: String)
+data class RegisterRequest(val email: String, val password: String, val role: String = "39bed02d-9546-4271-81a5-e34effe8154b")
 data class RefreshRequest(val refresh_token: String)
 
 data class DirectusResponse<T>(val data: T)
 data class AuthData(val access_token: String, val refresh_token: String, val expires: Int)
 
 data class CreateApiUserPayload(
-    val first_name: String,
-    val last_name: String,
     val email: String,
     val password: String,
+    val role: String = "39bed02d-9546-4271-81a5-e34effe8154b",
     val address: CreateApiUserAddress = CreateApiUserAddress()
 )
 

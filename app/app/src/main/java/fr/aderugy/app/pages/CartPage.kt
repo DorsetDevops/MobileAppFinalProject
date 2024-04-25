@@ -1,5 +1,8 @@
 package fr.aderugy.app.pages
 
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,10 +21,12 @@ import fr.aderugy.app.api.ApiService
 import fr.aderugy.app.api.CreateOrderPayload
 import fr.aderugy.app.api.OrderEntries
 import fr.aderugy.app.api.ProductEntry
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
-fun CartScreen(apiService: ApiService) {
+fun CartScreen(apiService: ApiService, context: Context) {
     var cartItems by remember { mutableStateOf<List<ApiCart>?>(null) }
     var products by remember { mutableStateOf<List<ApiProduct>?>(null) }
     var isLoading by remember { mutableStateOf(true) }
@@ -132,14 +137,30 @@ fun CartScreen(apiService: ApiService) {
                         val payload = CreateOrderPayload(OrderEntries(create = entries))
 
                         // Call the API
-                        apiService.createOrder(payload)
+                        try {
+                            apiService.createOrder(payload)
 
-                        cartItems!!.forEach {
-                            apiService.deleteCart(it.id.toString())
+                            // If the order creation is successful, show a confirmation Toast
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(context, "Order placed successfully!", Toast.LENGTH_LONG).show()
+                            }
+
+                            // Clear the cart by deleting items
+                            cartItems!!.forEach {
+                                apiService.deleteCart(it.id.toString())
+                            }
+
+                            // Refresh the UI or data
+                            refreshTrigger += 1
+                        } catch (e: Exception) {
+                            Log.e("ERROR", e.message ?: "")
+                            // Handle potential errors such as network issues or API failures
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(context, "Failed to place order: ${e.message}", Toast.LENGTH_LONG).show()
+                            }
                         }
-
-                        refreshTrigger += 1
                     }
+
                 }) {
                     Text(text = "Order")
                 }

@@ -11,7 +11,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import fr.aderugy.app.api.ApiService
+import fr.aderugy.app.api.CreateApiUserPayload
 import fr.aderugy.app.api.LoginRequest
+import fr.aderugy.app.api.RegisterRequest
 import kotlinx.coroutines.launch
 
 class LoginActivity : ComponentActivity() {
@@ -71,7 +73,24 @@ fun LoginScreen(apiService: ApiService, activity: ComponentActivity) {
                 }
             }
         }) {
-            Text("Send")
+            Text("Log In")
+        }
+        Button(onClick = {
+            coroutineScope.launch {
+                val registered = apiService.register(CreateApiUserPayload(email, password))
+
+                if (registered.isSuccessful && ApiService.login(apiService, LoginRequest(email, password))) {
+                    // Start MainActivity on successful login
+                    val intent = Intent(activity, MainActivity::class.java)
+                    activity.startActivity(intent)
+                    // Finish the current activity
+                    activity.finish()
+                }
+                else
+                    responseMessage = "Error"
+            }
+        }) {
+            Text("Sign In")
         }
         Text(responseMessage, style = MaterialTheme.typography.bodyLarge)
     }
